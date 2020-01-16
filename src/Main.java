@@ -5,7 +5,6 @@ public class Main {
 	static ArrayList<Card> deck = new ArrayList<Card>();
 	static ArrayList<Card> trashdeck = new ArrayList<Card>();
 	static ArrayList<ArrayList<Card>> mainPiles = new ArrayList<ArrayList<Card>>();
-	//static ArrayList<Card> tmpdeck = new ArrayList<Card>();
 	static ArrayList<String> info = new ArrayList<String>();
 	public static int round = 0;
 	static Player[] plist;
@@ -42,20 +41,24 @@ public class Main {
 		}
 		createPilesFromDeck(deck);
 		while (true) {
+			//currPlayer = (int) (Math.random()*(plist.length)); //randomize starting "player/ai"
+			currPlayer = 0;
 			plist[currPlayer].drawCards(deck); //current player draws cards on their turn
 			if(plist[currPlayer].ai) { // ai control
 				
 			} else {
-				//currPlayer = (int) (Math.random()*(plist.length)); //randomize starting "player/ai"
-				currPlayer = 0;
 				while (!roundEnd) {
+					for(int i = 0; i < plist.length; i++) {
+						if(plist[i].pPiles.get(0).size()==0) {
+							javax.swing.JOptionPane.showMessageDialog(null, "Player "+i+" Wins");
+							System.exit(0);
+						}
+					}
+					if(deck.size() == 0 ) {
+						deck.addAll(trashdeck);
+						trashdeck.clear();
+					}
 					doTurn();
-				}
-			}
-			for(int i=0; i<plist.length; i++) {
-				if(plist[i].pPiles.get(0).size()==0) {
-					javax.swing.JOptionPane.showMessageDialog(null, "Player "+i+" Wins");
-					System.exit(0);
 				}
 			}
 			roundEnd=false;
@@ -111,7 +114,7 @@ public class Main {
 			}
 			if(checkMove(tempf, temppos, tempt) == true) {
 				plist[0].playCard(tempf, temppos, tempt);
-				if(tempt == mainPiles.get(0) || tempt == mainPiles.get(1) || tempt == mainPiles.get(2) || tempt == mainPiles.get(3)) {
+				if(isToMainPile(tempt)) {
 					if(tempt.get(tempt.size()-1).id == 0) {
 						tempt.get(tempt.size()-1).id = tempt.size();
 					}
@@ -128,17 +131,18 @@ public class Main {
 			}
 		} else if(choice==2) {
 			info.clear();
+			info.add("round: "+round);
 			info.add("Board: ");
 			for(int i=0; i< mainPiles.size(); i++) {
 				info.add("\n"+i+" ");
 				if(mainPiles.get(i).size() > 0) {
 					info.add(""+(mainPiles.get(i).get(mainPiles.get(i).size()-1)).id);
-				} else {
+				}/* else {
 					info.add("");
-				}
+				}*/
 			}
 			info.add("\n"+"Player "+(currPlayer+1)+" Hand:\n");
-			info.addAll(printDeck(plist[currPlayer].hand, true));
+			info.addAll(deckToString(plist[currPlayer].hand, true));
 			for(int i=0; i< plist.length; i++) {
 				info.add("  Player "+(i+1)+"\n");
 				for(int l = 0; l < plist[i].pPiles.size(); l++) {
@@ -208,7 +212,7 @@ public class Main {
 	static boolean isToMainPile(ArrayList<Card> tempt) {
 		return tempt == mainPiles.get(0) || tempt == Main.mainPiles.get(1) || tempt == Main.mainPiles.get(2) || tempt == Main.mainPiles.get(3);
 	}
-	static ArrayList<String> printDeck(ArrayList<Card> deck, boolean pos) { //convert card list to id and position to string list
+	static ArrayList<String> deckToString(ArrayList<Card> deck, boolean pos) { //convert card list to id and position to string list
 		ArrayList<String> p = new ArrayList<String>();
 		if(pos) {
 			for(int i=0; i<deck.size(); i++) {
