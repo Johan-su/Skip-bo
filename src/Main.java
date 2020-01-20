@@ -6,11 +6,14 @@ public class Main {
 	static ArrayList<Card> trashdeck = new ArrayList<Card>();
 	static ArrayList<ArrayList<Card>> mainPiles = new ArrayList<ArrayList<Card>>();
 	static ArrayList<String> info = new ArrayList<String>();
-	public static int round = 0;
+	static ArrayList<Card> tempf = null;
+	static ArrayList<Card> tempt = null;
+	static int temppos = 0;
+	static int round = 0;
 	static Player[] plist;
 	static int currPlayer;
 	static int stockPile,max;
-	public static boolean roundEnd;
+	static boolean roundEnd;
 	public static void main(String[] args) {
 		for(int i = 0; i < 4; i++) {
 			mainPiles.add(new ArrayList<Card>());   
@@ -40,8 +43,8 @@ public class Main {
 			plist[i+1] = new Player(true);
 		}
 		createPilesFromDeck(deck);
+		currPlayer = (int) (Math.random()*(plist.length)); //randomize starting "player/ai"
 		while (true) {
-			//currPlayer = (int) (Math.random()*(plist.length)); //randomize starting "player/ai"
 			currPlayer = 0;
 			plist[currPlayer].drawCards(deck); //current player draws cards on their turn
 			if(plist[currPlayer].ai) { // ai control
@@ -49,7 +52,7 @@ public class Main {
 			} else {
 				while (!roundEnd) {
 					for(int i = 0; i < plist.length; i++) {
-						if(plist[i].pPiles.get(0).size()==0) {
+						if(plist[i].pPiles.get(0).size() == 0) {
 							javax.swing.JOptionPane.showMessageDialog(null, "Player "+i+" Wins");
 							System.exit(0);
 						}
@@ -62,26 +65,29 @@ public class Main {
 				}
 			}
 			roundEnd=false;
+			endTurn();
 			round++;
 		}
 	}
-	public static void shuffleDeck(ArrayList<Card> deck) {
+	static void shuffleDeck(ArrayList<Card> deck) {
 		Collections.shuffle(deck);
 	}
 	static void doTurn() {
+		System.out.println("player: "+currPlayer);
+		tempf = null;
+		tempt = null;
+		temppos = 0;
+		if(plist[currPlayer].ai == false) {
 		String c2="";
 		int choice = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("what do you want to do? 1. play card 2. show all known cards"));
 		a1:
 		if(choice==1) { // play card
-			ArrayList<Card> tempf = null;
-			ArrayList<Card> tempt = null;
-			int temppos = 0;
-			String c1 =javax.swing.JOptionPane.showInputDialog("from hand/pile? c to cancel \n pile0-pile4 type the pile Number");
+			String c1 = javax.swing.JOptionPane.showInputDialog("from hand/pile? c to cancel \n pile0-pile4 type the pile Number");
 			if(c1.equals("c")) {
 				break a1;
 			} else if(c1.equals("hand")) {
-				tempf=plist[0].hand;
-				c2 =javax.swing.JOptionPane.showInputDialog("position? 0-4, c to cancel ");
+				tempf = plist[0].hand;
+				c2 = javax.swing.JOptionPane.showInputDialog("position? 0-4, c to cancel ");
 				if(c2.equals("c")) {
 					break a1;
 				} else {
@@ -112,7 +118,7 @@ public class Main {
 					tempt=mainPiles.get(Integer.valueOf(c3));
 				}
 			}
-			if(checkMove(tempf, temppos, tempt) == true) {
+			if(checkMove(tempf, temppos, tempt)) {
 				plist[0].playCard(tempf, temppos, tempt);
 				if(isToMainPile(tempt)) {
 					if(tempt.get(tempt.size()-1).id == 0) {
@@ -157,9 +163,14 @@ public class Main {
 				}
 			}
 			javax.swing.JOptionPane.showMessageDialog(null, info.toString()); // shows string with current board state in the game
+			}
+		
+		} else {
+			randomAi(tempf, temppos, tempt);
+			plist[currPlayer].playCard(tempf, temppos, tempt);
 		}
 	}
-	public static void createPilesFromDeck(ArrayList<Card> deck) { // creates player stock piles from main deck
+	static void createPilesFromDeck(ArrayList<Card> deck) { // creates player stock piles from main deck
 		for(int i=0; i<plist.length; i++) {
 			for(int l = 0; l < stockPile; l++) {
 				plist[i].pPiles.get(0).add(deck.get(0));
@@ -168,10 +179,15 @@ public class Main {
 		}
 	}
 	static void endTurn() {
-		roundEnd = true;
+		//roundEnd = true;
 		System.out.println("endturn");
+		currPlayer = (currPlayer+1) % plist.length;
 	}
-	public static boolean checkMove(ArrayList<Card> tempf, int temppos, ArrayList<Card> tempt) {
+	static boolean checkMove(ArrayList<Card> tempf, int temppos, ArrayList<Card> tempt) { //checks if chosen move is allowed
+		if(tempf == null || tempt == null) return false;
+		if(tempf.size() == 0) {
+			return false;
+		}
 		if(isPlayerPileOnBoard(tempf)) {
 			if(!isToMainPile(tempt)) {
 				return false;
@@ -227,7 +243,33 @@ public class Main {
 		}
 		return p;
 	}
-	public static void addToTrash(ArrayList<Card> deck) {
+	static void addToTrash(ArrayList<Card> deck) {
 		trashdeck.addAll(deck);
+	}
+	static void randomAi(ArrayList<Card> tempf, int temppos, ArrayList<Card> tempt) {
+		boolean end = false;
+		while(!end) {
+		int fromr = (int) (Math.random()*6);
+		int fromHandPos = (int) (Math.random()*5);
+		int tor = (int) (Math.random()*8);
+		if(fromr == 5) {
+			tempf = plist[currPlayer].hand;
+			temppos = fromHandPos;
+		} else {
+			tempf = plist[currPlayer].pPiles.get(fromr);
+			temppos = tempf.size()-1;
+		}
+		if(tor < 4) {
+			tempt = mainPiles.get(tor);
+		} else {
+			tempt = plist[currPlayer].pPiles.get(tor-3);
+		}
+		if(checkMove(tempf, temppos, tempt)) {
+			end = true;
+		} else {
+			System.out.println("ai illegal move");
+		}
+	}
+		
 	}
 }
