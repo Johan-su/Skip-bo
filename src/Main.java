@@ -45,7 +45,7 @@ public class Main {
 		createPilesFromDeck(deck);
 		currPlayer = (int) (Math.random()*(plist.length)); //randomize starting "player/ai"
 		while (true) {
-			currPlayer = 0;
+			//currPlayer = 0;
 			plist[currPlayer].drawCards(deck); //current player draws cards on their turn
 			if(plist[currPlayer].ai) { // ai control
 				
@@ -136,38 +136,13 @@ public class Main {
 				doTurn();
 			}
 		} else if(choice==2) {
-			info.clear();
-			info.add("round: "+round);
-			info.add("Board: ");
-			for(int i=0; i< mainPiles.size(); i++) {
-				info.add("\n"+i+" ");
-				if(mainPiles.get(i).size() > 0) {
-					info.add(""+(mainPiles.get(i).get(mainPiles.get(i).size()-1)).id);
-				}/* else {
-					info.add("");
-				}*/
-			}
-			info.add("\n"+"Player "+(currPlayer+1)+" Hand:\n");
-			info.addAll(deckToString(plist[currPlayer].hand, true));
-			for(int i=0; i< plist.length; i++) {
-				info.add("  Player "+(i+1)+"\n");
-				for(int l = 0; l < plist[i].pPiles.size(); l++) {
-					//info.add("pile" + l + " ");
-					//info.addAll(printDeck(plist[i].pPiles.get(l), true));;
-					if(plist[i].pPiles.get(l).size() > 0) {
-						info.add("pile"+l+": card "+plist[i].pPiles.get(l).get(plist[i].pPiles.get(l).size()-1).id+"\n");
-					} else {
-						info.add("pile"+l+": \n");
-					}
-					info.add("\n");
-				}
-			}
-			javax.swing.JOptionPane.showMessageDialog(null, info.toString()); // shows string with current board state in the game
-			}
+			printBoard();
+		}
 		
 		} else {
-			randomAi(tempf, temppos, tempt);
+			randomAi();
 			plist[currPlayer].playCard(tempf, temppos, tempt);
+			printBoard();
 		}
 	}
 	static void createPilesFromDeck(ArrayList<Card> deck) { // creates player stock piles from main deck
@@ -246,7 +221,7 @@ public class Main {
 	static void addToTrash(ArrayList<Card> deck) {
 		trashdeck.addAll(deck);
 	}
-	static void randomAi(ArrayList<Card> tempf, int temppos, ArrayList<Card> tempt) {
+	static void randomAi() {
 		boolean end = false;
 		while(!end) {
 		int fromr = (int) (Math.random()*6);
@@ -270,6 +245,36 @@ public class Main {
 			System.out.println("ai illegal move");
 		}
 	}
+		
+	}
+	static void printBoard() {
+		info.clear();
+		info.add("round: "+round);
+		info.add("Board: ");
+		for(int i=0; i< mainPiles.size(); i++) {
+			info.add("\n"+i+" ");
+			if(mainPiles.get(i).size() > 0) {
+				info.add(""+(mainPiles.get(i).get(mainPiles.get(i).size()-1)).id);
+			}/* else {
+				info.add("");
+			}*/
+		}
+		info.add("\n"+"Player "+(currPlayer+1)+" Hand:\n");
+		info.addAll(deckToString(plist[currPlayer].hand, true));
+		for(int i=0; i< plist.length; i++) {
+			info.add("  Player "+(i+1)+"\n");
+			for(int l = 0; l < plist[i].pPiles.size(); l++) {
+				//info.add("pile" + l + " ");
+				//info.addAll(printDeck(plist[i].pPiles.get(l), true));;
+				if(plist[i].pPiles.get(l).size() > 0) {
+					info.add("pile"+l+": card "+plist[i].pPiles.get(l).get(plist[i].pPiles.get(l).size()-1).id+"\n");
+				} else {
+					info.add("pile"+l+": \n");
+				}
+				info.add("\n");
+			}
+		}
+		javax.swing.JOptionPane.showMessageDialog(null, info.toString()); // shows string with current board state in the game
 		
 	}
 }
