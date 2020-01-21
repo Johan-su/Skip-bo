@@ -16,10 +16,11 @@ public class Player {
 		f.remove(pos);
 	}
 	public void drawCards(ArrayList<Card> f) {
-		int tempsize=hand.size();
-		for(int i = 0; i<(5-tempsize); i++) {
-			hand.add(f.get(f.size()-1));
-			f.remove(f.size()-1);
+		System.out.println("player "+(Main.currPlayer+1)+" draws Cards");
+		int tempsize = hand.size();
+		for(int i = 0; i < (5 - tempsize); i++) {
+			hand.add(f.get(f.size() - 1));
+			f.remove(f.size() - 1);
 		}
 	}
 

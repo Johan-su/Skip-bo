@@ -4,16 +4,22 @@ import java.util.Collections;
 public class Main {
 	static ArrayList<Card> deck = new ArrayList<Card>();
 	static ArrayList<Card> trashdeck = new ArrayList<Card>();
+	
 	static ArrayList<ArrayList<Card>> mainPiles = new ArrayList<ArrayList<Card>>();
 	static ArrayList<String> info = new ArrayList<String>();
+	
 	static ArrayList<Card> tempf = null;
 	static ArrayList<Card> tempt = null;
+	
 	static int temppos = 0;
 	static int round = 0;
+	
 	static Player[] plist;
 	static int currPlayer;
+	
 	static int stockPile,max;
 	static boolean roundEnd;
+	
 	public static void main(String[] args) {
 		for(int i = 0; i < 4; i++) {
 			mainPiles.add(new ArrayList<Card>());   
@@ -38,18 +44,23 @@ public class Main {
 			}
 		}
 		shuffleDeck(deck); //randomize deck
-			plist[0] = new Player(false);
+			plist[0] = new Player(true);
+			//plist[0] = new Player(false);
 		for(int i = 0; i < bots; i++) {
 			plist[i+1] = new Player(true);
 		}
 		createPilesFromDeck(deck);
 		currPlayer = (int) (Math.random()*(plist.length)); //randomize starting "player/ai"
+		
 		while (true) {
+			System.out.println("decksize "+deck.size());
+			System.out.println("trashdecksize "+trashdeck.size());
+			if(deck.size() == 0 ) { // adds trashdeck to deck
+				deck.addAll(trashdeck);
+				trashdeck.clear();
+			}
+			plist[currPlayer].drawCards(deck); // draws cards
 			//currPlayer = 0;
-			plist[currPlayer].drawCards(deck); //current player draws cards on their turn
-			if(plist[currPlayer].ai) { // ai control
-				
-			} else {
 				while (!roundEnd) {
 					for(int i = 0; i < plist.length; i++) {
 						if(plist[i].pPiles.get(0).size() == 0) {
@@ -57,13 +68,8 @@ public class Main {
 							System.exit(0);
 						}
 					}
-					if(deck.size() == 0 ) {
-						deck.addAll(trashdeck);
-						trashdeck.clear();
-					}
 					doTurn();
 				}
-			}
 			roundEnd=false;
 			endTurn();
 			round++;
@@ -73,10 +79,18 @@ public class Main {
 		Collections.shuffle(deck);
 	}
 	static void doTurn() {
-		System.out.println("player: "+currPlayer);
+		System.out.println("player: "+(currPlayer+1));
 		tempf = null;
 		tempt = null;
 		temppos = 0;
+		if(deck.size() == 0 ) { //adds trashdeck to deck
+			deck.addAll(trashdeck);
+			trashdeck.clear();
+		}
+		if(plist[currPlayer].hand.size() == 0) { //current player draws cards if their hand is empty during their turn
+			plist[currPlayer].drawCards(deck);
+			System.out.println("Player "+currPlayer+" got a empty hand"); 
+		}
 		if(plist[currPlayer].ai == false) {
 		String c2="";
 		int choice = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("what do you want to do? 1. play card 2. show all known cards"));
@@ -124,26 +138,26 @@ public class Main {
 					if(tempt.get(tempt.size()-1).id == 0) {
 						tempt.get(tempt.size()-1).id = tempt.size();
 					}
-					for(int i = 0; i < mainPiles.size(); i++) {
-						if(mainPiles.get(i).size() > 0 && mainPiles.get(i).get(mainPiles.get(i).size()-1).id == 12) {
-							addToTrash(mainPiles.get(i));
-							mainPiles.get(i).clear();
-						}
-					}
+					checkMainPileAddToTrash();
 				}
 			} else {
 				javax.swing.JOptionPane.showMessageDialog(null, "ILLEGAL MOVE");
 				doTurn();
 			}
-		} else if(choice==2) {
-			printBoard();
-		}
+		} else if(choice==2) printBoard();
 		
 		} else {
 			randomAi();
 			plist[currPlayer].playCard(tempf, temppos, tempt);
-			printBoard();
+			if(isToMainPile(tempt)) {
+				if(tempt.size() > 0 && tempt.get(tempt.size()-1).id == 0) {
+					tempt.get(tempt.size()-1).id = tempt.size();
+				}
+				checkMainPileAddToTrash();
+			}
+			//printBoard();
 		}
+		if(tempt == plist[currPlayer].pPiles.get(1) || tempt == plist[currPlayer].pPiles.get(2) || tempt == plist[currPlayer].pPiles.get(3) || tempt == plist[currPlayer].pPiles.get(4)) roundEnd = true;;
 	}
 	static void createPilesFromDeck(ArrayList<Card> deck) { // creates player stock piles from main deck
 		for(int i=0; i<plist.length; i++) {
@@ -167,37 +181,32 @@ public class Main {
 			if(!isToMainPile(tempt)) {
 				return false;
 			}
-			return true;
-		   } else {
-				if(tempf == plist[currPlayer].hand) {
-					if(tempt == plist[currPlayer].pPiles.get(0)) {
-						return false;
+		   } else if(tempf == plist[currPlayer].hand) {
+			   	if(tempt == plist[currPlayer].pPiles.get(0)) {
+					return false;
 					
-					} else if(tempt == plist[currPlayer].pPiles.get(1) || tempt == plist[currPlayer].pPiles.get(2) || tempt == plist[currPlayer].pPiles.get(3) || tempt == plist[currPlayer].pPiles.get(4)) {
-						endTurn();
-						
-						} else if(isToMainPile(tempt)) {
-							if(tempf.get(temppos).id != 0) {
-								if(tempt.size() > 0 && tempf.get(temppos).id - 1 != tempt.get(tempt.size()-1).id ) {
-									return false;
-									
-								} else if(tempt.size() == 0) {
-									if(tempf.get(temppos).id != 0 && tempf.get(temppos).id != 1) {
-										return false;
-									}
-								}
+					}
+		   }
+		if(isToMainPile(tempt)) {
+			if(tempf.get(temppos).id != 0) {
+				if(tempt.size() > 0 && tempf.get(temppos).id - 1 != tempt.get(tempt.size()-1).id ) {
+					return false;
+				}					
+				 if(tempt.size() == 0) {
+					if(tempf.get(temppos).id != 0 && tempf.get(temppos).id != 1) {
+						return false;
 						}
 					}
-				return true;
+				}
 			}
-			return false;
-		}
+		return true;
 	}
 	static boolean isPlayerPileOnBoard(ArrayList<Card> tempf) {
-		return tempf == plist[currPlayer].pPiles.get(0) || 
+		return  tempf == plist[currPlayer].pPiles.get(0) || 
 				tempf == plist[currPlayer].pPiles.get(1) || 
 				tempf == plist[currPlayer].pPiles.get(2) || 
-				tempf == plist[currPlayer].pPiles.get(3);
+				tempf == plist[currPlayer].pPiles.get(3) ||
+				tempf == plist[currPlayer].pPiles.get(4);
 		
 	}
 	static boolean isToMainPile(ArrayList<Card> tempt) {
@@ -225,7 +234,7 @@ public class Main {
 		boolean end = false;
 		while(!end) {
 		int fromr = (int) (Math.random()*6);
-		int fromHandPos = (int) (Math.random()*5);
+		int fromHandPos = (int) (Math.random()*plist[currPlayer].hand.size());
 		int tor = (int) (Math.random()*8);
 		if(fromr == 5) {
 			tempf = plist[currPlayer].hand;
@@ -241,8 +250,15 @@ public class Main {
 		}
 		if(checkMove(tempf, temppos, tempt)) {
 			end = true;
+			System.out.println("ai   legal move "+"fromr: "+fromr+" fromHandPos: "+fromHandPos+" tor: "+tor);
 		} else {
-			System.out.println("ai illegal move");
+			System.out.println("ai illegal move "+"fromr: "+fromr+" fromHandPos: "+fromHandPos+" tor: "+tor);
+			if(tempt.size() > 0 && tempf.size() > 0) {
+				System.out.println("from "+ tempf.get(temppos)+" to "+ tempt.get(tempt.size()-1));
+			} else if(tempf.size() > 0){
+				System.out.println("from "+ tempf.get(temppos)+" to empty");
+			}
+			
 		}
 	}
 		
@@ -276,5 +292,13 @@ public class Main {
 		}
 		javax.swing.JOptionPane.showMessageDialog(null, info.toString()); // shows string with current board state in the game
 		
+	}
+	static void checkMainPileAddToTrash() {
+		for(int i = 0; i < mainPiles.size(); i++) {
+			if(mainPiles.get(i).size() > 0 && mainPiles.get(i).get(mainPiles.get(i).size()-1).id == 12) {
+				addToTrash(mainPiles.get(i));
+				mainPiles.get(i).clear();
+			}
+		}
 	}
 }
