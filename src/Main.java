@@ -11,7 +11,7 @@ public class Main {
 	static ArrayList<Card> tempt = null;
 	
 	static int temppos = 0;
-	static int round = 0;
+	static int turns = 0;
 	
 	static Player[] plist;
 	static int currPlayer;
@@ -34,8 +34,8 @@ public class Main {
 			main(args);
 		}
 		plist = new Player[1+bots];
-			plist[0] = new Player(true);
-			//plist[0] = new Player(false);
+			//plist[0] = new Player(true);
+			plist[0] = new Player(false);
 		for(int i = 0; i < bots; i++) {
 			plist[i+1] = new Player(true);
 		}
@@ -43,15 +43,23 @@ public class Main {
 		createPilesFromDeck(deck);
 		currPlayer = (int) (Math.random()*(plist.length)); //randomize starting "player/ai"
 		
+		
+		
 		while (true) {
 			System.out.println("decksize "+deck.size());
-			System.out.println("round "+round);
+			System.out.println("turn "+turns);
+			if(turns == 100000) printBoard();
 			if(deck.size() <= 5 ) { // create deck if empty
 				createDeck(deck);
 			}
 			plist[currPlayer].drawCards(deck); // draws cards
 			//currPlayer = 0;
+			
+			
 				while (!roundEnd) {
+					for(int i = 0; i < mainPiles.size(); i++) {
+						if(mainPiles.get(i).size() == 12) mainPiles.get(i).clear();
+					}
 					for(int i = 0; i < plist.length; i++) {
 						if(plist[i].pPiles.get(0).size() == 0) {
 							javax.swing.JOptionPane.showMessageDialog(null, "Player "+i+" Wins");
@@ -62,17 +70,18 @@ public class Main {
 				}
 			roundEnd=false;
 			endTurn();
-			round++;
+			turns++;
+			
+			
+			
 		}
-	}
-	static void shuffleDeck(ArrayList<Card> deck) {
-		Collections.shuffle(deck);
 	}
 	static void doTurn() {
 		System.out.println("player: "+(currPlayer+1));
 		tempf = null;
 		tempt = null;
 		temppos = 0;
+		
 		if(plist[currPlayer].hand.size() == 0) { //current player draws cards if their hand is empty during their turn
 			plist[currPlayer].drawCards(deck);
 			System.out.println("Player "+currPlayer+" got a empty hand"); 
@@ -103,7 +112,7 @@ public class Main {
 				
 			}
 			if(!(c1.equals("hand"))) {
-				temppos= tempf.size()-1;
+				temppos = tempf.size()-1;
 			}
 			if(c1.equals("c")) {
 				break a1;
@@ -246,7 +255,7 @@ public class Main {
 	}
 	static void printBoard() {
 		info.clear();
-		info.add("round: "+round);
+		info.add("round: "+turns);
 		info.add("Board: ");
 		for(int i=0; i< mainPiles.size(); i++) {
 			info.add("\n"+i+" ");
@@ -264,9 +273,9 @@ public class Main {
 				//info.add("pile" + l + " ");
 				//info.addAll(printDeck(plist[i].pPiles.get(l), true));;
 				if(plist[i].pPiles.get(l).size() > 0) {
-					info.add("pile"+l+": card "+plist[i].pPiles.get(l).get(plist[i].pPiles.get(l).size()-1).id+"\n");
+					info.add("pile"+l+": card "+plist[i].pPiles.get(l).get(plist[i].pPiles.get(l).size()-1).id);
 				} else {
-					info.add("pile"+l+": \n");
+					info.add("pile"+l+":");
 				}
 				info.add("\n");
 			}
@@ -283,6 +292,6 @@ public class Main {
 				deck.add(new Card(i));
 			}
 		}
-		shuffleDeck(deck); //randomize deck
+		Collections.shuffle(deck);; //randomize deck
 	}
 }
