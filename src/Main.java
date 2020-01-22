@@ -3,7 +3,6 @@ import java.util.Collections;
 
 public class Main {
 	static ArrayList<Card> deck = new ArrayList<Card>();
-	static ArrayList<Card> trashdeck = new ArrayList<Card>();
 	
 	static ArrayList<ArrayList<Card>> mainPiles = new ArrayList<ArrayList<Card>>();
 	static ArrayList<String> info = new ArrayList<String>();
@@ -35,29 +34,20 @@ public class Main {
 			main(args);
 		}
 		plist = new Player[1+bots];
-		for(int i = 0; i < 6; i++) {
-			deck.add(new Card(0));
-		}
-		for(int i = 0; i < 13; i++) {
-			for(int l = 0; l < 12; l++) {
-				deck.add(new Card(i));
-			}
-		}
-		shuffleDeck(deck); //randomize deck
 			plist[0] = new Player(true);
 			//plist[0] = new Player(false);
 		for(int i = 0; i < bots; i++) {
 			plist[i+1] = new Player(true);
 		}
+		createDeck(deck);
 		createPilesFromDeck(deck);
 		currPlayer = (int) (Math.random()*(plist.length)); //randomize starting "player/ai"
 		
 		while (true) {
 			System.out.println("decksize "+deck.size());
-			System.out.println("trashdecksize "+trashdeck.size());
-			if(deck.size() == 0 ) { // adds trashdeck to deck
-				deck.addAll(trashdeck);
-				trashdeck.clear();
+			System.out.println("round "+round);
+			if(deck.size() <= 5 ) { // create deck if empty
+				createDeck(deck);
 			}
 			plist[currPlayer].drawCards(deck); // draws cards
 			//currPlayer = 0;
@@ -83,10 +73,6 @@ public class Main {
 		tempf = null;
 		tempt = null;
 		temppos = 0;
-		if(deck.size() == 0 ) { //adds trashdeck to deck
-			deck.addAll(trashdeck);
-			trashdeck.clear();
-		}
 		if(plist[currPlayer].hand.size() == 0) { //current player draws cards if their hand is empty during their turn
 			plist[currPlayer].drawCards(deck);
 			System.out.println("Player "+currPlayer+" got a empty hand"); 
@@ -138,7 +124,6 @@ public class Main {
 					if(tempt.get(tempt.size()-1).id == 0) {
 						tempt.get(tempt.size()-1).id = tempt.size();
 					}
-					checkMainPileAddToTrash();
 				}
 			} else {
 				javax.swing.JOptionPane.showMessageDialog(null, "ILLEGAL MOVE");
@@ -153,7 +138,6 @@ public class Main {
 				if(tempt.size() > 0 && tempt.get(tempt.size()-1).id == 0) {
 					tempt.get(tempt.size()-1).id = tempt.size();
 				}
-				checkMainPileAddToTrash();
 			}
 			//printBoard();
 		}
@@ -227,9 +211,6 @@ public class Main {
 		}
 		return p;
 	}
-	static void addToTrash(ArrayList<Card> deck) {
-		trashdeck.addAll(deck);
-	}
 	static void randomAi() {
 		boolean end = false;
 		while(!end) {
@@ -293,12 +274,15 @@ public class Main {
 		javax.swing.JOptionPane.showMessageDialog(null, info.toString()); // shows string with current board state in the game
 		
 	}
-	static void checkMainPileAddToTrash() {
-		for(int i = 0; i < mainPiles.size(); i++) {
-			if(mainPiles.get(i).size() > 0 && mainPiles.get(i).get(mainPiles.get(i).size()-1).id == 12) {
-				addToTrash(mainPiles.get(i));
-				mainPiles.get(i).clear();
+	static void createDeck(ArrayList<Card> deck) {
+		for(int i = 0; i < 6; i++) {
+			deck.add(new Card(0));
+		}
+		for(int i = 0; i < 13; i++) {
+			for(int l = 0; l < 12; l++) {
+				deck.add(new Card(i));
 			}
 		}
+		shuffleDeck(deck); //randomize deck
 	}
 }
