@@ -245,14 +245,14 @@ public class Main {
 			if(c1.equals("c")) {
 				break a1;
 			}
-			String c3 =javax.swing.JOptionPane.showInputDialog("to pile? c to cancel \n mainpile0-mainpile3 pPile4-pPile7  type the pile number");
+			String c3 = javax.swing.JOptionPane.showInputDialog("to pile? c to cancel \n mainpile0-mainpile3 pPile1-pPile4  type the pile number");
 			if(c3.equals("c")) {
 				break a1;
 			} else if(Integer.valueOf(c3) != null) {
-				if(Integer.valueOf(c3) > 3) {
-					tempt=plist[0].pPiles.get(Integer.valueOf(c3)-3);
+				if(c3.charAt(0) == "p".charAt(0)) {
+					tempt = plist[0].pPiles.get(Character.getNumericValue(c3.charAt(c3.length()-1)));
 				} else {
-					tempt=mainPiles.get(Integer.valueOf(c3));
+					tempt = mainPiles.get((Character.getNumericValue(c3.charAt(c3.length()-1))));
 				}
 			}
 			if(checkMove(tempf, temppos, tempt)) {
@@ -266,7 +266,7 @@ public class Main {
 				javax.swing.JOptionPane.showMessageDialog(null, "ILLEGAL MOVE");
 				doTurn();
 			}
-		} else if(choice==2) printBoard();
+		} else if(choice == 2) printBoard();
 		
 	}
 	static void gameInit() {

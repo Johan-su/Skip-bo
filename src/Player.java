@@ -6,7 +6,7 @@ public class Player {
 	boolean ai;
 	
 	public Player(boolean ai) {
-		this.ai=ai;
+		this.ai = ai;
 		for(int i = 0; i < 5; i++) {
 			pPiles.add(new ArrayList<Card>());
 		}
