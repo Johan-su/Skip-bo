@@ -2,10 +2,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Main {
-	static ArrayList<Card> deck = new ArrayList<Card>();
 	
+	static ArrayList<Card> deck = new ArrayList<Card>();
 	static ArrayList<ArrayList<Card>> mainPiles = new ArrayList<ArrayList<Card>>();
-	//static ArrayList<String> info = new ArrayList<String>();
 	
 	static ArrayList<Card> tempf = null;
 	static ArrayList<Card> tempt = null;
@@ -20,28 +19,7 @@ public class Main {
 	static boolean roundEnd;
 	
 	public static void main(String[] args) {
-		for(int i = 0; i < 4; i++) {
-			mainPiles.add(new ArrayList<Card>());   
-		}
-		
-		int bots = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("how many AI"));
-		if((bots) < 1 || (bots) > 14) {
-			main(args);
-		}
-		max = (int)((105/(1+bots))-5); // formula for max amount of cards in stockpile with 1+bots because there is always one player
-		stockPile = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("how many cards in stock pile max: "+max+" cards"));
-		if(stockPile > max || max <= 0) { 
-			main(args);
-		}
-		plist = new Player[1+bots];
-			//plist[0] = new Player(true);
-			plist[0] = new Player(false);
-		for(int i = 0; i < bots; i++) {
-			plist[i+1] = new Player(true);
-		}
-		createDeck(deck);
-		createPilesFromDeck(deck);
-		currPlayer = (int) (Math.random()*(plist.length)); //randomize starting "player/ai"
+		gameInit();
 		
 		
 		
@@ -152,27 +130,26 @@ public class Main {
 	static boolean isToMainPile(ArrayList<Card> tempt) {
 		return tempt == mainPiles.get(0) || tempt == Main.mainPiles.get(1) || tempt == Main.mainPiles.get(2) || tempt == Main.mainPiles.get(3);
 	}
-	static ArrayList<String> deckToString(ArrayList<Card> deck, boolean pos) { //convert card list to id and position to string list
-		ArrayList<String> p = new ArrayList<String>();
+	static String deckToString(ArrayList<Card> deck, boolean pos) { //convert card list to id and position to string list
+		StringBuilder p = new StringBuilder();
 		if(pos) {
 			for(int i=0; i<deck.size(); i++) {
-				//System.out.println("pos "+i+deck.get(i).id);
-				p.add(("pos "+i+" "+deck.get(i).id)+"\n");
+				p.append(("pos "+i+" "+deck.get(i).id)+"\n");
 			}
 		} else {
 			for(int i=0; i<deck.size(); i++) {
-				//System.out.println(deck.get(i).id);
-				p.add(String.valueOf((deck.get(i).id)+"\n"));
+				p.append((deck.get(i).id)+"\n");
 			}
 		}
-		return p;
+		return p.toString();
 	}
 	static void randomAi() {
 		boolean end = false;
+		int fromr, fromHandPos, tor;
 		while(!end) {
-		int fromr = (int) (Math.random()*6);
-		int fromHandPos = (int) (Math.random()*plist[currPlayer].hand.size());
-		int tor = (int) (Math.random()*8);
+		fromr = (int) (Math.random()*6);
+		fromHandPos = (int) (Math.random()*plist[currPlayer].hand.size());
+		tor = (int) (Math.random()*8);
 		if(fromr == 5) {
 			tempf = plist[currPlayer].hand;
 			temppos = fromHandPos;
@@ -201,31 +178,26 @@ public class Main {
 		
 	}
 	static void printBoard() {
-		ArrayList<String> info = new ArrayList<String>();
-		info.clear();
-		info.add("round: "+turns);
-		info.add("Board: ");
+		StringBuilder info = new StringBuilder();
+		info.append("round: "+turns);
+		info.append("Board: ");
 		for(int i=0; i< mainPiles.size(); i++) {
-			info.add("\n"+i+" ");
+			info.append("\n"+i+" ");
 			if(mainPiles.get(i).size() > 0) {
-				info.add(""+(mainPiles.get(i).get(mainPiles.get(i).size()-1)).id);
-			}/* else {
-				info.add("");
-			}*/
+				info.append(""+(mainPiles.get(i).get(mainPiles.get(i).size()-1)).id);
+			}
 		}
-		info.add("\n"+"Player "+(currPlayer+1)+" Hand:\n");
-		info.addAll(deckToString(plist[currPlayer].hand, true));
+		info.append("\n"+"Player "+(currPlayer+1)+" Hand:\n");
+		info.append(deckToString(plist[currPlayer].hand, true));
 		for(int i=0; i< plist.length; i++) {
-			info.add("  Player "+(i+1)+"\n");
+			info.append("  Player "+(i+1)+"\n");
 			for(int l = 0; l < plist[i].pPiles.size(); l++) {
-				//info.add("pile" + l + " ");
-				//info.addAll(printDeck(plist[i].pPiles.get(l), true));;
 				if(plist[i].pPiles.get(l).size() > 0) {
-					info.add("pile"+l+": card "+plist[i].pPiles.get(l).get(plist[i].pPiles.get(l).size()-1).id);
+					info.append("pile"+l+": card "+plist[i].pPiles.get(l).get(plist[i].pPiles.get(l).size()-1).id);
 				} else {
-					info.add("pile"+l+":");
+					info.append("pile"+l+":");
 				}
-				info.add("\n");
+				info.append("\n");
 			}
 		}
 		javax.swing.JOptionPane.showMessageDialog(null, info.toString()); // shows string with current board state in the game
@@ -296,5 +268,27 @@ public class Main {
 			}
 		} else if(choice==2) printBoard();
 		
+	}
+	static void gameInit() {
+		for(int i = 0; i < 4; i++) mainPiles.add(new ArrayList<Card>());   
+		
+		
+		int bots = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("how many AI"));
+		if((bots) < 1 || (bots) > 14) {
+			gameInit();
+		}
+		max = (int)((105/(1+bots))-5); // formula for max amount of cards in stockpile with 1+bots because there is always one player
+		stockPile = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("how many cards in stock pile max: "+max+" cards"));
+		if(stockPile > max || max <= 0) { 
+			gameInit();
+		}
+		plist = new Player[1+bots];
+		plist[0] = new Player(false);
+		for(int i = 0; i < bots; i++) {
+			plist[i+1] = new Player(true);
+		}
+		createDeck(deck);
+		createPilesFromDeck(deck);
+		currPlayer = (int) (Math.random()*(plist.length)); //randomize starting "player/ai"
 	}
 }
