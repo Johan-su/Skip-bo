@@ -56,8 +56,6 @@ public class Main {
 	}
 	static void doTurn() {
 		System.out.println("player: "+(currPlayer+1));
-		tempf = null;
-		tempt = null;
 		temppos = 0;
 		
 		if(plist[currPlayer].hand.size() == 0) { //current player draws cards if their hand is empty during their turn
@@ -131,17 +129,17 @@ public class Main {
 		return tempt == mainPiles.get(0) || tempt == Main.mainPiles.get(1) || tempt == Main.mainPiles.get(2) || tempt == Main.mainPiles.get(3);
 	}
 	static String deckToString(ArrayList<Card> deck, boolean pos) { //convert card list to id and position to string list
-		StringBuilder p = new StringBuilder();
+		StringBuilder stringBuilder = new StringBuilder();
 		if(pos) {
-			for(int i=0; i<deck.size(); i++) {
-				p.append(("pos "+i+" "+deck.get(i).id)+"\n");
+			for(int i = 0; i<deck.size(); i++) {
+				stringBuilder.append(("pos "+i+" "+deck.get(i).id)+"\n");
 			}
 		} else {
-			for(int i=0; i<deck.size(); i++) {
-				p.append((deck.get(i).id)+"\n");
+			for(int i = 0; i<deck.size(); i++) {
+				stringBuilder.append((deck.get(i).id)+"\n");
 			}
 		}
-		return p.toString();
+		return stringBuilder.toString();
 	}
 	static void randomAi() {
 		boolean end = false;
@@ -164,8 +162,8 @@ public class Main {
 		}
 		if(checkMove(tempf, temppos, tempt)) {
 			end = true;
-			System.out.println("ai   legal move "+"fromr: "+fromr+" fromHandPos: "+fromHandPos+" tor: "+tor);
-		} else {
+		//	System.out.println("ai   legal move "+"fromr: "+fromr+" fromHandPos: "+fromHandPos+" tor: "+tor);
+		}/* else {
 			System.out.println("ai illegal move "+"fromr: "+fromr+" fromHandPos: "+fromHandPos+" tor: "+tor);
 			if(tempt.size() > 0 && tempf.size() > 0) {
 				System.out.println("from "+ tempf.get(temppos)+" to "+ tempt.get(tempt.size()-1));
@@ -173,14 +171,13 @@ public class Main {
 				System.out.println("from "+ tempf.get(temppos)+" to empty");
 			}
 			
-		}
+		}*/
 	}
 		
 	}
 	static void printBoard() {
 		StringBuilder info = new StringBuilder();
-		info.append("round: "+turns);
-		info.append("Board: ");
+		info.append("Turn: "+turns+" Board: ");
 		for(int i=0; i< mainPiles.size(); i++) {
 			info.append("\n"+i+" ");
 			if(mainPiles.get(i).size() > 0) {
@@ -219,7 +216,7 @@ public class Main {
 		int choice = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("what do you want to do? 1. play card 2. show all known cards"));
 		a1:
 		if(choice==1) { // play card
-			String c1 = javax.swing.JOptionPane.showInputDialog("from hand/pile? c to cancel \n pile0-pile4 type the pile Number");
+			String c1 = javax.swing.JOptionPane.showInputDialog("from hand/pile? c to cancel \n pPile0-pPile4 type the pile Number");
 			if(c1.equals("c")) {
 				break a1;
 			} else if(c1.equals("hand")) {
@@ -248,7 +245,7 @@ public class Main {
 			String c3 = javax.swing.JOptionPane.showInputDialog("to pile? c to cancel \n mainpile0-mainpile3 pPile1-pPile4  type the pile number");
 			if(c3.equals("c")) {
 				break a1;
-			} else if(Integer.valueOf(c3) != null) {
+			} else if(!(c3.equals(null))) {
 				if(c3.charAt(0) == "p".charAt(0)) {
 					tempt = plist[0].pPiles.get(Character.getNumericValue(c3.charAt(c3.length()-1)));
 				} else {
