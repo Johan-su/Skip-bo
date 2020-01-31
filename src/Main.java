@@ -6,8 +6,7 @@ public class Main {
 	static ArrayList<Card> deck = new ArrayList<Card>();
 	static ArrayList<ArrayList<Card>> mainPiles = new ArrayList<ArrayList<Card>>();
 	
-	static ArrayList<Card> tempf = null;
-	static ArrayList<Card> tempt = null;
+	static ArrayList<Card> tempf, tempt;
 	
 	static int temppos = 0;
 	static int turns = 0;
@@ -24,9 +23,9 @@ public class Main {
 		
 		
 		while (true) {
-			System.out.println("decksize "+deck.size());
-			System.out.println("turn "+turns);
-			if(turns == 100000) printBoard();
+			//System.out.println("decksize "+deck.size());
+			//System.out.println("turn "+turns);
+			//if(turns == 100000) printBoard();
 			if(deck.size() <= 5 ) { // create deck if empty
 				createDeck(deck);
 			}
@@ -141,7 +140,7 @@ public class Main {
 		}
 		return stringBuilder.toString();
 	}
-	static void randomAi() {
+	static void randomAi() { //  generates random choices
 		boolean end = false;
 		int fromr, fromHandPos, tor;
 		while(!end) {
@@ -200,7 +199,7 @@ public class Main {
 		javax.swing.JOptionPane.showMessageDialog(null, info.toString()); // shows string with current board state in the game
 		
 	}
-	static void createDeck(ArrayList<Card> deck) {
+	static void createDeck(ArrayList<Card> deck) { // creates a shuffled Skip-Bo deck
 		for(int i = 0; i < 6; i++) {
 			deck.add(new Card(0));
 		}
