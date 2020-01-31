@@ -53,7 +53,7 @@ public class Main {
 			
 		}
 	}
-	static void doTurn() {
+	static void doTurn() {// Current Player to do its turn
 		System.out.println("player: "+(currPlayer+1));
 		temppos = 0;
 		
@@ -83,11 +83,11 @@ public class Main {
 			}
 		}
 	}
-	static void endTurn() {
+	static void endTurn() { // shifts Current player to next player
 		System.out.println("endturn");
 		currPlayer = (currPlayer+1) % plist.length;
 	}
-	static boolean checkMove(ArrayList<Card> tempf, int temppos, ArrayList<Card> tempt) { //checks if chosen move is allowed
+	static boolean checkMove() { //checks if chosen move is allowed
 		if(tempf == null || tempt == null) return false;
 		if(tempf.size() == 0) {
 			return false;
@@ -116,7 +116,7 @@ public class Main {
 			}
 		return true;
 	}
-	static boolean isPlayerPileOnBoard(ArrayList<Card> tempf) {
+	static boolean isPlayerPileOnBoard(ArrayList<Card> tempf) { // returns true if the deck, the player is taking from is a playerpile
 		return  tempf == plist[currPlayer].pPiles.get(0) || 
 				tempf == plist[currPlayer].pPiles.get(1) || 
 				tempf == plist[currPlayer].pPiles.get(2) || 
@@ -124,10 +124,10 @@ public class Main {
 				tempf == plist[currPlayer].pPiles.get(4);
 		
 	}
-	static boolean isToMainPile(ArrayList<Card> tempt) {
+	static boolean isToMainPile(ArrayList<Card> tempt) { // returns true if the deck, the player is playing to is a MainPile
 		return tempt == mainPiles.get(0) || tempt == Main.mainPiles.get(1) || tempt == Main.mainPiles.get(2) || tempt == Main.mainPiles.get(3);
 	}
-	static String deckToString(ArrayList<Card> deck, boolean pos) { //convert card list to id and position to string list
+	static String deckToString(ArrayList<Card> deck, boolean pos) { //convert card list to id and position (if boolean is true) to string
 		StringBuilder stringBuilder = new StringBuilder();
 		if(pos) {
 			for(int i = 0; i<deck.size(); i++) {
@@ -140,7 +140,7 @@ public class Main {
 		}
 		return stringBuilder.toString();
 	}
-	static void randomAi() { //  generates random choices
+	static void randomAi() { //  generates random choices as a "AI"
 		boolean end = false;
 		int fromr, fromHandPos, tor;
 		while(!end) {
@@ -159,7 +159,7 @@ public class Main {
 		} else {
 			tempt = plist[currPlayer].pPiles.get(tor-3);
 		}
-		if(checkMove(tempf, temppos, tempt)) {
+		if(checkMove()) {
 			end = true;
 		//	System.out.println("ai   legal move "+"fromr: "+fromr+" fromHandPos: "+fromHandPos+" tor: "+tor);
 		}/* else {
@@ -174,7 +174,7 @@ public class Main {
 	}
 		
 	}
-	static void printBoard() {
+	static void printBoard() { // shows string with current board state in the game
 		StringBuilder info = new StringBuilder();
 		info.append("Turn: "+turns+" Board: ");
 		for(int i=0; i< mainPiles.size(); i++) {
@@ -196,7 +196,7 @@ public class Main {
 				info.append("\n");
 			}
 		}
-		javax.swing.JOptionPane.showMessageDialog(null, info.toString()); // shows string with current board state in the game
+		javax.swing.JOptionPane.showMessageDialog(null, info.toString());
 		
 	}
 	static void createDeck(ArrayList<Card> deck) { // creates a shuffled Skip-Bo deck
@@ -210,7 +210,7 @@ public class Main {
 		}
 		Collections.shuffle(deck);; //randomize deck
 	}
-	static void playerChoice() {
+	static void playerChoice() { // starts a decision system for players to choose cards and deck.
 		String c2="";
 		int choice = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("what do you want to do? 1. play card 2. show all known cards"));
 		a1:
@@ -251,7 +251,7 @@ public class Main {
 					tempt = mainPiles.get((Character.getNumericValue(c3.charAt(c3.length()-1))));
 				}
 			}
-			if(checkMove(tempf, temppos, tempt)) {
+			if(checkMove()) {
 				plist[0].playCard(tempf, temppos, tempt);
 				if(isToMainPile(tempt)) {
 					if(tempt.get(tempt.size()-1).id == 0) {
@@ -265,7 +265,7 @@ public class Main {
 		} else if(choice == 2) printBoard();
 		
 	}
-	static void gameInit() {
+	static void gameInit() { // creates first deck, stockpiles, players and ai
 		for(int i = 0; i < 4; i++) mainPiles.add(new ArrayList<Card>());   
 		
 		
@@ -279,7 +279,7 @@ public class Main {
 			gameInit();
 		}
 		plist = new Player[1+bots];
-		plist[0] = new Player(false);
+		plist[0] = new Player(true);
 		for(int i = 0; i < bots; i++) {
 			plist[i+1] = new Player(true);
 		}
