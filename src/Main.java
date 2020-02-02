@@ -6,23 +6,23 @@ public class Main {
 	static ArrayList<Card> deck = new ArrayList<Card>();
 	static ArrayList<ArrayList<Card>> mainPiles = new ArrayList<ArrayList<Card>>();
 	
-	static ArrayList<Card> tempf, tempt;
+	static ArrayList<Card> tempf, tempt; //tempf is what deck is going to be taken from, tempt is what deck the card being taken from tempf is going to
 	
-	static int temppos = 0;
+	static int temppos = 0; // if position is optional (from hand) it is chosen by temppos
 	static int turns = 0;
 	
 	static Player[] plist;
 	static int currPlayer;
 	
-	static int stockPile,max;
-	static boolean roundEnd;
+	static int stockPile;
+	static boolean roundEnd, debug;
 	
 	public static void main(String[] args) {
 		gameInit();
 		
 		
 		
-		while (true) {
+		while (true) { // game loop
 			//System.out.println("decksize "+deck.size());
 			//System.out.println("turn "+turns);
 			//if(turns == 100000) printBoard();
@@ -66,7 +66,7 @@ public class Main {
 		} else {
 			randomAi();
 			plist[currPlayer].playCard(tempf, temppos, tempt);
-			if(isToMainPile(tempt)) {
+			if(isToMainPile()) {
 				if(tempt.size() > 0 && tempt.get(tempt.size()-1).id == 0) {
 					tempt.get(tempt.size()-1).id = tempt.size();
 				}
@@ -92,8 +92,8 @@ public class Main {
 		if(tempf.size() == 0) {
 			return false;
 		}
-		if(isPlayerPileOnBoard(tempf)) {
-			if(!isToMainPile(tempt)) {
+		if(isPlayerPileOnBoard()) {
+			if(!isToMainPile()) {
 				return false;
 			}
 		   } else if(tempf == plist[currPlayer].hand) {
@@ -102,7 +102,7 @@ public class Main {
 					
 					}
 		   }
-		if(isToMainPile(tempt)) {
+		if(isToMainPile()) {
 			if(tempf.get(temppos).id != 0) {
 				if(tempt.size() > 0 && tempf.get(temppos).id - 1 != tempt.get(tempt.size()-1).id ) {
 					return false;
@@ -116,7 +116,7 @@ public class Main {
 			}
 		return true;
 	}
-	static boolean isPlayerPileOnBoard(ArrayList<Card> tempf) { // returns true if the deck, the player is taking from is a playerpile
+	static boolean isPlayerPileOnBoard() { // returns true if the deck, the player is taking from is a playerpile
 		return  tempf == plist[currPlayer].pPiles.get(0) || 
 				tempf == plist[currPlayer].pPiles.get(1) || 
 				tempf == plist[currPlayer].pPiles.get(2) || 
@@ -124,7 +124,7 @@ public class Main {
 				tempf == plist[currPlayer].pPiles.get(4);
 		
 	}
-	static boolean isToMainPile(ArrayList<Card> tempt) { // returns true if the deck, the player is playing to is a MainPile
+	static boolean isToMainPile() { // returns true if the deck, the player is playing to is a MainPile
 		return tempt == mainPiles.get(0) || tempt == Main.mainPiles.get(1) || tempt == Main.mainPiles.get(2) || tempt == Main.mainPiles.get(3);
 	}
 	static String deckToString(ArrayList<Card> deck, boolean pos) { //convert card list to id and position (if boolean is true) to string
@@ -142,57 +142,69 @@ public class Main {
 	}
 	static void randomAi() { //  generates random choices as a "AI"
 		boolean end = false;
-		int fromr, fromHandPos, tor;
+		int from, handPos, to;
 		while(!end) {
-		fromr = (int) (Math.random()*6);
-		fromHandPos = (int) (Math.random()*plist[currPlayer].hand.size());
-		tor = (int) (Math.random()*8);
-		if(fromr == 5) {
-			tempf = plist[currPlayer].hand;
-			temppos = fromHandPos;
-		} else {
-			tempf = plist[currPlayer].pPiles.get(fromr);
-			temppos = tempf.size()-1;
-		}
-		if(tor < 4) {
-			tempt = mainPiles.get(tor);
-		} else {
-			tempt = plist[currPlayer].pPiles.get(tor-3);
-		}
-		if(checkMove()) {
-			end = true;
-		//	System.out.println("ai   legal move "+"fromr: "+fromr+" fromHandPos: "+fromHandPos+" tor: "+tor);
-		}/* else {
-			System.out.println("ai illegal move "+"fromr: "+fromr+" fromHandPos: "+fromHandPos+" tor: "+tor);
-			if(tempt.size() > 0 && tempf.size() > 0) {
-				System.out.println("from "+ tempf.get(temppos)+" to "+ tempt.get(tempt.size()-1));
-			} else if(tempf.size() > 0){
-				System.out.println("from "+ tempf.get(temppos)+" to empty");
-			}
+			StringBuilder info = new StringBuilder("ai ");
 			
-		}*/
-	}
+			from = (int) (Math.random()*6);
+			handPos = (int) (Math.random()*plist[currPlayer].hand.size());
+			to = (int) (Math.random()*8);
+			
+			if(from == 5) {
+				
+				tempf = plist[currPlayer].hand;
+				temppos = handPos;
+				
+			} else {
+				
+				tempf = plist[currPlayer].pPiles.get(from);
+				temppos = tempf.size()-1;
+				
+			}
+			if(to < 4) { // if tempt number is less than 4 pick a mainPile else a pPile
+				tempt = mainPiles.get(to);
+				
+			} else tempt = plist[currPlayer].pPiles.get(to-3);
+			
+			if(checkMove()) {
+				
+				end = true;
+				info.append("legal");
+				
+			} else {
+				info.append("illegal");
+				
+			}
+			if(debug) {
+				info.append(" move from: "+ from +" handPos: "+ handPos +" to: "+ to);
+				System.out.println(info.toString());
+			}
+		}
 		
 	}
 	static void printBoard() { // shows string with current board state in the game
 		StringBuilder info = new StringBuilder();
 		info.append("Turn: "+turns+" Board: ");
+		info.append(" Deck: "+deck.size());
 		for(int i=0; i< mainPiles.size(); i++) {
 			info.append("\n"+i+" ");
 			if(mainPiles.get(i).size() > 0) {
 				info.append(""+(mainPiles.get(i).get(mainPiles.get(i).size()-1)).id);
 			}
 		}
-		info.append("\n"+"Player "+(currPlayer+1)+" Hand:\n");
+		if(!(plist[currPlayer].ai)) info.append("\n"+"Player "+(currPlayer+1)+" Hand:\n");
 		info.append(deckToString(plist[currPlayer].hand, true));
+		
 		for(int i=0; i< plist.length; i++) {
 			info.append("  Player "+(i+1)+"\n");
+			
 			for(int l = 0; l < plist[i].pPiles.size(); l++) {
+				
 				if(plist[i].pPiles.get(l).size() > 0) {
 					info.append("pile"+l+": card "+plist[i].pPiles.get(l).get(plist[i].pPiles.get(l).size()-1).id);
-				} else {
-					info.append("pile"+l+":");
-				}
+					
+				} else info.append("pile"+l+":");
+				
 				info.append("\n");
 			}
 		}
@@ -211,22 +223,21 @@ public class Main {
 		Collections.shuffle(deck);; //randomize deck
 	}
 	static void playerChoice() { // starts a decision system for players to choose cards and deck.
-		String c2="";
 		int choice = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("what do you want to do? 1. play card 2. show all known cards"));
 		a1:
-		if(choice==1) { // play card
+		if(choice == 1) { // play card
 			String c1 = javax.swing.JOptionPane.showInputDialog("from hand/pile? c to cancel \n pPile0-pPile4 type the pile Number");
 			if(c1.equals("c")) {
 				break a1;
 			} else if(c1.equals("hand")) {
+				
 				tempf = plist[0].hand;
-				c2 = javax.swing.JOptionPane.showInputDialog("position? 0-4, c to cancel ");
-				if(c2.equals("c")) {
-					break a1;
-				} else {
-					temppos = Integer.valueOf(c2);
-				}
-			} else if(Integer.valueOf(c1) != null) {
+				String c2 = javax.swing.JOptionPane.showInputDialog("position? 0-4, c to cancel ");
+				
+				if(c2.equals("c")) break a1;
+				temppos = Integer.valueOf(c2);
+				
+			} else if(c1 != null) {
 				if(plist[0].pPiles.get(Integer.valueOf(c1)).size() != 0) {
 					tempf=plist[0].pPiles.get(Integer.valueOf(c1));
 				} else {
@@ -235,29 +246,22 @@ public class Main {
 				}
 				
 			}
-			if(!(c1.equals("hand"))) {
-				temppos = tempf.size()-1;
-			}
-			if(c1.equals("c")) {
-				break a1;
-			}
-			String c3 = javax.swing.JOptionPane.showInputDialog("to pile? c to cancel \n mainpile0-mainpile3 pPile1-pPile4  type the pile number");
-			if(c3.equals("c")) {
-				break a1;
-			} else if(!(c3.equals(null))) {
-				if(c3.charAt(0) == "p".charAt(0)) {
-					tempt = plist[0].pPiles.get(Character.getNumericValue(c3.charAt(c3.length()-1)));
-				} else {
-					tempt = mainPiles.get((Character.getNumericValue(c3.charAt(c3.length()-1))));
-				}
-			}
+			if(!(c1.equals("hand"))) temppos = tempf.size()-1; // if not hand it takes from top of the deck.
+			if(c1.equals("c")) break a1;
+			
+			String c3 = javax.swing.JOptionPane.showInputDialog("to pile? c to cancel \n mainpile0-mainpile3 pPile1-pPile4  type the pile (m/p) type and number");
+			if(!(c3.charAt(0) == "m".charAt(0) || c3.charAt(0) == "p".charAt(0))) break a1;
+			
+			int pileNumber = Character.getNumericValue(c3.charAt(c3.length()-1));
+			
+			if(c3.charAt(0) == "p".charAt(0)) { // if pPiles to differentiate between mainPiles and own pPiles
+				tempt = plist[0].pPiles.get(pileNumber);
+					
+			} else tempt = mainPiles.get(pileNumber);
+			
 			if(checkMove()) {
 				plist[0].playCard(tempf, temppos, tempt);
-				if(isToMainPile(tempt)) {
-					if(tempt.get(tempt.size()-1).id == 0) {
-						tempt.get(tempt.size()-1).id = tempt.size();
-					}
-				}
+				if(isToMainPile() && tempt.get(tempt.size()-1).id == 0) tempt.get(tempt.size()-1).id = tempt.size(); // if Skip-bo card (ID 0) change ID to 1 greater than the top in the deck
 			} else {
 				javax.swing.JOptionPane.showMessageDialog(null, "ILLEGAL MOVE");
 				doTurn();
@@ -266,25 +270,27 @@ public class Main {
 		
 	}
 	static void gameInit() { // creates first deck, stockpiles, players and ai
-		for(int i = 0; i < 4; i++) mainPiles.add(new ArrayList<Card>());   
+		int max;
+		String p = javax.swing.JOptionPane.showInputDialog("TYPE \"debug\" FOR DEBUG");
+		if(p.equals("debug")) debug = true;
 		
+		for(int i = 0; i < 4; i++) mainPiles.add(new ArrayList<Card>());   // adds piles to mainPiles arraylist
 		
 		int bots = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("how many AI"));
-		if((bots) < 1 || (bots) > 14) {
-			gameInit();
-		}
+		if((bots) < 1 || (bots) > 14) gameInit();
+		
 		max = (int)((105/(1+bots))-5); // formula for max amount of cards in stockpile with 1+bots because there is always one player
 		stockPile = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("how many cards in stock pile max: "+max+" cards"));
-		if(stockPile > max || max <= 0) { 
-			gameInit();
-		}
+		
+		if(stockPile > max || max <= 0) gameInit();
 		plist = new Player[1+bots];
-		plist[0] = new Player(true);
-		for(int i = 0; i < bots; i++) {
-			plist[i+1] = new Player(true);
-		}
+		
+		plist[0] = new Player(false);
+		for(int i = 0; i < bots; i++) plist[i+1] = new Player(true);
+		
 		createDeck(deck);
 		createPilesFromDeck(deck);
-		currPlayer = (int) (Math.random()*(plist.length)); //randomize starting "player/ai"
+		
+		currPlayer = (int) (Math.random()*(plist.length)); // randomize starting "player/ai"
 	}
 }
