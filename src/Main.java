@@ -243,11 +243,11 @@ public class Main {
 					temppos = tempf.size()-1; // if not hand it takes from top of the deck.
 					
 				} else {
-					javax.swing.JOptionPane.showMessageDialog(null, "cant take from empty pile");
+					javax.swing.JOptionPane.showMessageDialog(null, "can't take from empty pile");
 					break a1;
 				}
 			}
-			String c3 = javax.swing.JOptionPane.showInputDialog("to pile? c to cancel \n mainpile1-mainpile4 pPile1-pPile4  type the pile (m/p) type and number");
+			String c3 = javax.swing.JOptionPane.showInputDialog("to pile? c to cancel \n mPile1-mPile4 pPile1-pPile4  type the pile (m/p) type and number");
 			if(!(c3.charAt(0) == "m".charAt(0) || c3.charAt(0) == "p".charAt(0))) break a1;
 			
 			int pileNumber = Character.getNumericValue(c3.charAt(c3.length()-1));
@@ -272,7 +272,6 @@ public class Main {
 		String p = javax.swing.JOptionPane.showInputDialog("TYPE \"debug\" FOR DEBUG");
 		if(p.equals("debug")) debug = true;
 		
-		for(int i = 0; i < 4; i++) mainPiles.add(new ArrayList<Card>());   // adds piles to mainPiles arraylist
 		
 		int bots = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("how many AI"));
 		if((bots) < 1 || (bots) > 14) gameInit();
@@ -285,7 +284,7 @@ public class Main {
 		
 		plist[0] = new Player(false);
 		for(int i = 0; i < bots; i++) plist[i+1] = new Player(true);
-		
+		for(int i = 0; i < 4; i++) mainPiles.add(new ArrayList<Card>());   // adds piles to mainPiles arraylist
 		createDeck(deck);
 		createPilesFromDeck(deck);
 		
