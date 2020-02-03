@@ -187,13 +187,13 @@ public class Main {
 		info.append("Turn: "+turns+" Board: ");
 		info.append(" Deck: "+deck.size());
 		for(int i=0; i< mainPiles.size(); i++) {
-			info.append("\n"+i);
+			info.append("\n"+"mPile"+(i+1)+": ");
 			if(mainPiles.get(i).size() > 0) {
-				info.append(" "+(mainPiles.get(i).get(mainPiles.get(i).size()-1)).id);
+				info.append(""+(mainPiles.get(i).get(mainPiles.get(i).size()-1)).id);
 			}
 		}
 		info.append("\n");
-		if(!(plist[currPlayer].ai)) { // only print player hand
+		if(!(plist[currPlayer].ai)) { // only print non-AI hand
 			info.append("Player "+(currPlayer+1)+" Hand:\n");
 			info.append(deckToString(plist[currPlayer].hand, true)); // print hand
 		}		
@@ -201,11 +201,9 @@ public class Main {
 			info.append("  Player "+(i+1)+"\n");
 			
 			for(int l = 0; l < plist[i].pPiles.size(); l++) {
+				info.append("pPile"+l+": ");
 				
-				if(plist[i].pPiles.get(l).size() > 0) {
-					info.append("pile"+l+": card "+plist[i].pPiles.get(l).get(plist[i].pPiles.get(l).size()-1).id);
-					
-				} else info.append("pile"+l+":");
+				if(plist[i].pPiles.get(l).size() > 0) info.append(""+plist[i].pPiles.get(l).get(plist[i].pPiles.get(l).size()-1).id);
 				
 				info.append("\n");
 			}
@@ -228,30 +226,27 @@ public class Main {
 		int choice = Integer.parseInt(javax.swing.JOptionPane.showInputDialog("what do you want to do? 1. play card 2. show all known cards"));
 		a1:
 		if(choice == 1) { // play card
-			String c1 = javax.swing.JOptionPane.showInputDialog("from hand/pile? c to cancel \n pPile0-pPile4 type the pile Number");
-			if(c1.equals("c")) {
-				break a1;
-			} else if(c1.equals("hand")) {
+			String c1 = javax.swing.JOptionPane.showInputDialog("from pile? c to cancel \n pPile0-pPile4, hand0-hand4  type the pile (h/p) type and number");
+			if(c1.equals("c")) break a1;
+			
+			if(c1.charAt(0) == "h".charAt(0)) {
 				
 				tempf = plist[0].hand;
-				String c2 = javax.swing.JOptionPane.showInputDialog("position? 0-4, c to cancel ");
+				temppos = Character.getNumericValue(c1.charAt(c1.length()-1));
 				
-				if(c2.equals("c")) break a1;
-				temppos = Integer.valueOf(c2);
-				
-			} else if(c1 != null) {
-				if(plist[0].pPiles.get(Integer.valueOf(c1)).size() != 0) {
-					tempf=plist[0].pPiles.get(Integer.valueOf(c1));
+			} else {
+				int pilenumber = Character.getNumericValue(c1.charAt(c1.length()-1));
+				if(plist[0].pPiles.get(pilenumber).size() != 0) {
+					
+					tempf = plist[0].pPiles.get(pilenumber);
+					temppos = tempf.size()-1; // if not hand it takes from top of the deck.
+					
 				} else {
 					javax.swing.JOptionPane.showMessageDialog(null, "cant take from empty pile");
 					break a1;
 				}
-				
 			}
-			if(!(c1.equals("hand"))) temppos = tempf.size()-1; // if not hand it takes from top of the deck.
-			if(c1.equals("c")) break a1;
-			
-			String c3 = javax.swing.JOptionPane.showInputDialog("to pile? c to cancel \n mainpile0-mainpile3 pPile1-pPile4  type the pile (m/p) type and number");
+			String c3 = javax.swing.JOptionPane.showInputDialog("to pile? c to cancel \n mainpile1-mainpile4 pPile1-pPile4  type the pile (m/p) type and number");
 			if(!(c3.charAt(0) == "m".charAt(0) || c3.charAt(0) == "p".charAt(0))) break a1;
 			
 			int pileNumber = Character.getNumericValue(c3.charAt(c3.length()-1));
@@ -259,7 +254,7 @@ public class Main {
 			if(c3.charAt(0) == "p".charAt(0)) { // if pPiles to differentiate between mainPiles and own pPiles
 				tempt = plist[0].pPiles.get(pileNumber);
 					
-			} else tempt = mainPiles.get(pileNumber);
+			} else tempt = mainPiles.get(pileNumber-1); // -1 for mainPiles for better formating and to start at 1 instead of 0
 			
 			if(checkMove()) {
 				plist[0].playCard(tempf, temppos, tempt);
