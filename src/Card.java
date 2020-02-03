@@ -1,8 +1,7 @@
 
 public class Card {
-	int id, name;
+	int id;
 	public Card(int id) {
 		this.id = id;
-		this.name = id;
 	}
 }

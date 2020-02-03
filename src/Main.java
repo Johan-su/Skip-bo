@@ -186,6 +186,7 @@ public class Main {
 		StringBuilder info = new StringBuilder();
 		info.append("Turn: "+turns+" Board: ");
 		info.append(" Deck: "+deck.size());
+		
 		for(int i=0; i< mainPiles.size(); i++) {
 			info.append("\n"+"mPile"+(i+1)+": ");
 			if(mainPiles.get(i).size() > 0) {
@@ -227,7 +228,7 @@ public class Main {
 		a1:
 		if(choice == 1) { // play card
 			String c1 = javax.swing.JOptionPane.showInputDialog("from pile? c to cancel \n pPile0-pPile4, hand0-hand4  type the pile (h/p) type and number");
-			if(c1.equals("c")) break a1;
+			if(!(c1.charAt(0) == "h".charAt(0) || c1.charAt(0) == "p".charAt(0))) break a1;
 			
 			if(c1.charAt(0) == "h".charAt(0)) {
 				
@@ -254,7 +255,7 @@ public class Main {
 			if(c3.charAt(0) == "p".charAt(0)) { // if pPiles to differentiate between mainPiles and own pPiles
 				tempt = plist[0].pPiles.get(pileNumber);
 					
-			} else tempt = mainPiles.get(pileNumber-1); // -1 for mainPiles for better formating and to start at 1 instead of 0
+			} else tempt = mainPiles.get(pileNumber-1); // -1 for mainPiles for better formating and to be able to start at 1 instead of 0
 			
 			if(checkMove()) {
 				plist[0].playCard(tempf, temppos, tempt);
