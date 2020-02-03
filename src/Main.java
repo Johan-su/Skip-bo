@@ -187,15 +187,17 @@ public class Main {
 		info.append("Turn: "+turns+" Board: ");
 		info.append(" Deck: "+deck.size());
 		for(int i=0; i< mainPiles.size(); i++) {
-			info.append("\n"+i+" ");
+			info.append("\n"+i);
 			if(mainPiles.get(i).size() > 0) {
-				info.append(""+(mainPiles.get(i).get(mainPiles.get(i).size()-1)).id);
+				info.append(" "+(mainPiles.get(i).get(mainPiles.get(i).size()-1)).id);
 			}
 		}
-		if(!(plist[currPlayer].ai)) info.append("\n"+"Player "+(currPlayer+1)+" Hand:\n");
-		info.append(deckToString(plist[currPlayer].hand, true));
-		
-		for(int i=0; i< plist.length; i++) {
+		info.append("\n");
+		if(!(plist[currPlayer].ai)) { // only print player hand
+			info.append("Player "+(currPlayer+1)+" Hand:\n");
+			info.append(deckToString(plist[currPlayer].hand, true)); // print hand
+		}		
+		for(int i=0; i< plist.length; i++) { // prints current player
 			info.append("  Player "+(i+1)+"\n");
 			
 			for(int l = 0; l < plist[i].pPiles.size(); l++) {
