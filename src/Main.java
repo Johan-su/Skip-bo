@@ -15,22 +15,15 @@ public class Main {
 	static int currPlayer;
 	
 	static int stockPile;
-	static boolean roundEnd, debug;
+	static boolean roundEnd, debug; 
 	
 	public static void main(String[] args) {
 		gameInit();
 		
-		
-		
 		while (true) { // game loop
-			//System.out.println("decksize "+deck.size());
-			//System.out.println("turn "+turns);
-			//if(turns == 100000) printBoard();
-			if(deck.size() <= 5 ) { // create deck if empty
-				createDeck(deck);
-			}
+			if(deck.size() <= 5 ) createDeck(deck); // create deck if empty or less than a hand size
+			
 			plist[currPlayer].drawCards(deck); // draws cards
-			//currPlayer = 0;
 			
 			
 				while (!roundEnd) {
@@ -124,7 +117,7 @@ public class Main {
 				tempf == plist[currPlayer].pPiles.get(4);
 		
 	}
-	static boolean isToMainPile() { // returns true if the deck, the player is playing to is a MainPile
+	static boolean isToMainPile() { // returns true f the deck, the player is playing to is a MainPile
 		return tempt == mainPiles.get(0) || tempt == Main.mainPiles.get(1) || tempt == Main.mainPiles.get(2) || tempt == Main.mainPiles.get(3);
 	}
 	static String deckToString(ArrayList<Card> deck, boolean pos) { //convert card list to id and position (if boolean is true) to string
