@@ -117,7 +117,7 @@ public class Main {
 				tempf == plist[currPlayer].pPiles.get(4);
 		
 	}
-	static boolean isToMainPile() { // returns true f the deck, the player is playing to is a MainPile
+	static boolean isToMainPile() { // returns true if the deck, the player is playing to is a MainPile
 		return tempt == mainPiles.get(0) || tempt == Main.mainPiles.get(1) || tempt == Main.mainPiles.get(2) || tempt == Main.mainPiles.get(3);
 	}
 	static String deckToString(ArrayList<Card> deck, boolean pos) { //convert card list to id and position (if boolean is true) to string
@@ -245,7 +245,7 @@ public class Main {
 			
 			int pileNumber = Character.getNumericValue(c3.charAt(c3.length()-1));
 			
-			if(c3.charAt(0) == "p".charAt(0)) { // if pPiles to differentiate between mainPiles and own pPiles
+			if(c3.charAt(0) == "p".charAt(0)) { // if pPiles (to differentiate between mainPiles and own pPiles)
 				tempt = plist[0].pPiles.get(pileNumber);
 					
 			} else tempt = mainPiles.get(pileNumber-1); // -1 for mainPiles for better formating and to be able to start at 1 instead of 0
