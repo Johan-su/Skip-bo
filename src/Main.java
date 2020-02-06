@@ -10,11 +10,11 @@ public class Main {
 	
 	static ArrayList<Card> fromDeck, toDeck; //fromDeck is what deck is going to be taken from, toDeck is what deck the card being taken from fromDeck is going to
 	
-	static int temppos = 0; // if position is optional (from hand) it is chosen by temppos
+	static int temppos = 0; // position is required from hand, it is designated by temppos
 	static int turns = 0;
 	
 	static Player[] plist;
-	static int currPlayer;
+	static int currPlayer; 
 	
 	static int stockPile;
 	static boolean roundEnd, debug; 
@@ -292,7 +292,7 @@ public class Main {
 		
 		currPlayer = (int) (Math.random()*(plist.length)); // randomize starting "player/ai"
 	}
-	static int inputStringToInt(String s) {
+	static int inputStringToInt(String s) { // a try catch method for string inputs when expecting int
 		int i = 0;
 		try {
 			i = Integer.parseInt(javax.swing.JOptionPane.showInputDialog(s));
@@ -302,7 +302,7 @@ public class Main {
 		}
 		return i;
 	}
-	static int stringChoiceMinMax(String s, int min, int max) {
+	static int stringChoiceMinMax(String s, int min, int max) { // string input to int with min and max conditions
 		if(max < min) throw new NumberFormatException("min greater than max");
 		int i = inputStringToInt(s);
 		if(!(i >= max || i <= min)) stringChoiceMinMax(s, min, max);
