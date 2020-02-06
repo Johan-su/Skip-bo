@@ -23,7 +23,7 @@ public class Main {
 		gameInit();
 		
 		while (true) { // game loop
-			if(deck.size() <= 5 ) createDeck(deck); // create deck if empty or less than a hand size
+			if(deck.size() < 5 ) createDeck(deck); // create deck less than a hand size
 			
 			plist[currPlayer].drawCards(deck); // draws cards
 			
@@ -303,10 +303,11 @@ public class Main {
 		return i;
 	}
 	static int stringChoiceMinMax(String s, int min, int max) { // string input to int with min and max conditions
-		if(max < min) throw new NumberFormatException("min greater than max");
-		int i = inputStringToInt(s);
-		if(!(i >= max || i <= min)) stringChoiceMinMax(s, min, max);
-		return i;
-		
+		while(true) {
+			if(max < min) throw new NumberFormatException("min greater than max");
+			int i = 0;
+			i = inputStringToInt(s);
+			if(i <= max && i >= min) return i;
+		}
 	}
 }
