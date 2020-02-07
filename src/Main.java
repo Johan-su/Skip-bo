@@ -16,7 +16,7 @@ public class Main {
 	static Player[] plist;
 	static int currPlayer; 
 	
-	static int stockPile;
+	static int stockPile; // stockPile size in beginning
 	static boolean roundEnd, debug; 
 	
 	public static void main(String[] args) {
@@ -90,6 +90,7 @@ public class Main {
 			if(!isToMainPile()) {
 				return false;
 			}
+			
 		   } else if(fromDeck == plist[currPlayer].hand) {
 			   	if(toDeck == plist[currPlayer].pPiles.get(0)) {
 					return false;
