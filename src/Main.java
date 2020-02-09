@@ -43,9 +43,6 @@ public class Main {
 			roundEnd=false;
 			endTurn();
 			turns++;
-			
-			
-			
 		}
 	}
 	static void doTurn() {// Current Player to do its turn
@@ -82,26 +79,19 @@ public class Main {
 		currPlayer = (currPlayer+1) % plist.length;
 	}
 	static boolean checkMove() { //checks if chosen move is allowed
-		if(fromDeck == null || toDeck == null) return false;
-		if(fromDeck.size() == 0) return false;
+		if(fromDeck == null || fromDeck.isEmpty() || toDeck == null) return false;
 		
 		if(isPlayerPileOnBoard()) {
 			if(!isToMainPile()) return false;
 			
-		   } else if(fromDeck == plist[currPlayer].hand) {
-			   	if(toDeck == plist[currPlayer].pPiles.get(0)) {
-					return false;
-					
-					}
-		   }
+		} else if(toDeck == plist[currPlayer].pPiles.get(0) && fromDeck == plist[currPlayer].hand) return false;
+		
 		if(isToMainPile()) {
 			if(fromDeck.get(temppos).id != 0) {
-				if(toDeck.size() > 0 && fromDeck.get(temppos).id - 1 != toDeck.get(toDeck.size()-1).id ) {
-					return false;
-				}					
-				 if(toDeck.size() == 0) {
-					if(fromDeck.get(temppos).id != 0 && fromDeck.get(temppos).id != 1) return false;
-					}
+				if(toDeck.size() > 0 && fromDeck.get(temppos).id - 1 != toDeck.get(toDeck.size()-1).id ) return false;	
+				
+				if(toDeck.isEmpty() && fromDeck.get(temppos).id != 0 && fromDeck.get(temppos).id != 1) return false;
+				
 				}
 			}
 		return true; // if it passes all the tests return true
@@ -191,9 +181,10 @@ public class Main {
 			info.append("  Player "+(i+1)+"\n");
 			
 			for(int l = 0; l < plist[i].pPiles.size(); l++) {
+				ArrayList<Card> pPile = plist[i].pPiles.get(l);
 				info.append("pPile"+l+": ");
 				
-				if(plist[i].pPiles.get(l).size() > 0) info.append(""+plist[i].pPiles.get(l).get(plist[i].pPiles.get(l).size()-1).id);
+				if(plist[i].pPiles.get(l).size() > 0) info.append(pPile.get(pPile.size()-1).id + " ("+pPile.size() + ")");
 				
 				info.append("\n");
 			}
