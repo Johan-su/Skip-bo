@@ -83,13 +83,10 @@ public class Main {
 	}
 	static boolean checkMove() { //checks if chosen move is allowed
 		if(fromDeck == null || toDeck == null) return false;
-		if(fromDeck.size() == 0) {
-			return false;
-		}
+		if(fromDeck.size() == 0) return false;
+		
 		if(isPlayerPileOnBoard()) {
-			if(!isToMainPile()) {
-				return false;
-			}
+			if(!isToMainPile()) return false;
 			
 		   } else if(fromDeck == plist[currPlayer].hand) {
 			   	if(toDeck == plist[currPlayer].pPiles.get(0)) {
@@ -103,13 +100,11 @@ public class Main {
 					return false;
 				}					
 				 if(toDeck.size() == 0) {
-					if(fromDeck.get(temppos).id != 0 && fromDeck.get(temppos).id != 1) {
-						return false;
-						}
+					if(fromDeck.get(temppos).id != 0 && fromDeck.get(temppos).id != 1) return false;
 					}
 				}
 			}
-		return true;
+		return true; // if it passes all the tests return true
 	}
 	static boolean isPlayerPileOnBoard() { // returns true if the deck, the player is taking from is a playerpile
 		return  fromDeck == plist[currPlayer].pPiles.get(0) || 
@@ -218,6 +213,7 @@ public class Main {
 		Collections.shuffle(deck);; //randomize deck
 	}
 	static void playerChoice() { // starts a decision system for players to choose cards and deck.
+		while(true) {
 			String choice = javax.swing.JOptionPane.showInputDialog("what do you want to do? \n1. play card \n2. show all known cards");
 
 			switch(choice) {
@@ -227,14 +223,14 @@ public class Main {
 				
 				if(c1.isBlank() || !(c1.charAt(0) == "h".charAt(0) || c1.charAt(0) == "p".charAt(0))) {
 					javax.swing.JOptionPane.showMessageDialog(null, "Starting over");
-					playerChoice();
+					break;
 				}
 				int numberChoice = Character.getNumericValue(c1.charAt(c1.length()-1)); // last number in string determining position/pile
 				
 				if(c1.charAt(0) == "h".charAt(0)) { // if hand
 					
 					fromDeck = plist[0].hand;
-					temppos = numberChoice; // treats number after h if hand as position in hand
+					temppos = numberChoice; // treats number after h (hand) as position in hand
 					
 				} else { 
 					int pilenumber = numberChoice; // treats number after p as pile number
@@ -245,12 +241,12 @@ public class Main {
 						
 					} else {
 						javax.swing.JOptionPane.showMessageDialog(null, "can't take from empty pile");
-						playerChoice();
+						break;
 					}
 				}
 				String c3 = javax.swing.JOptionPane.showInputDialog("to pile? c to cancel \n mPile1-mPile4 pPile1-pPile4  type the pile (m/p) type and number");
 				
-				if(!(c3.charAt(0) == "m".charAt(0) || c3.charAt(0) == "p".charAt(0))) playerChoice();
+				if(!(c3.charAt(0) == "m".charAt(0) || c3.charAt(0) == "p".charAt(0))) break;
 				
 				int pileNumber = Character.getNumericValue(c3.charAt(c3.length()-1));
 				
@@ -261,17 +257,14 @@ public class Main {
 				
 				if(!(checkMove())) {
 					javax.swing.JOptionPane.showMessageDialog(null, "ILLEGAL MOVE");
-					playerChoice();
+					break;
 				}
-				break;
+				return;
 			case "2": // print board
 				printBoard();
-				playerChoice();
 				break;
-			
-			default:
-				playerChoice();
 			}
+		}
 
 	}
 	static void gameInit() { // creates first deck, stockpiles, players and ai
