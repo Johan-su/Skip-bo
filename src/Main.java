@@ -270,8 +270,11 @@ public class Main {
 		plist = new Player[1+bots];
 		
 		plist[0] = new Player(false);
+		
 		for(int i = 0; i < bots; i++) plist[i+1] = new Player(true);
+		
 		for(int i = 0; i < 4; i++) mainPiles.add(new ArrayList<Card>());   // adds piles to mainPiles arraylist
+		
 		createDeck(deck);
 		createPilesFromDeck(deck);
 		
