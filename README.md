@@ -1,1 +1,16 @@
-# Skip-bo
+//Johan TE2C
+
+När man startar programmet får man välja att köra debug-läge eller inte. Jag rekommenderar att bara klicka enter, sedan får du välja hur många AI ”motspelare” man får möta, jag rekommenderar 2. Efteråt för du välja hur många kort i stockpile ”pPile0”, spelet går ut på att bli av med sin egna pPile0 
+MÅL: Bli av med den egna stamhögen
+
+Dessa kort bildar spelarnas STAMHÖG (pPile0) och till dessa får man ha 4 HJÄLPHÖGAR (kallas pPiles i mitt spel).
+Man har sedan maximalt 4 gemensamma BYGGHÖGAR och en gemensam DRAGHÖG där man lägger de kort som blivit över efter utdelningen.
+
+ 
+Första spelaren börjar med att plocka upp 5 kort från draghögen och vänder samtidigt upp det kort som ligger överst i den egna stamhögen. Plockar man upp en etta eller ett Skip-bo kort får man starta en bygghög som man ska försöka bygga stegar på. (2, 3, 4, 5 etc) Lyckas man nå 12 vänds denna bygghög bort och läggs blandad tillbaka i draghögen.
+
+
+Kan man inte längre bygga på bygghögarna avslutar man omgången med att lägga ett kort i en av sina hjälphögar. Där får man bara använda det översta kortet i varje hög.
+
+I mitt program är mPile BYGGHÖGARNA och HJÄLPHÖGARNA pPile. DRAGHÖGERN kallas deck. När det är ens tur kan man få välja att antingen visa spelplanen med 2 eller spela ett kort med 1. Om du väljer 2 kommer du få ett meddelande med allas spelare pPiles samt din egna hand och mPiles. Där efter börjar valen om och du kan välja att spela eller skriva ut alla kända kort.
+Om du väljer att spela ett kort kan du välja att spela från antigen pPile eller hand vilket görs med att första bokstaven antigen h för hand eller p för pPile och därefter en siffra vilket tyder på positionen i handen eller vilken kortlek av pPiles. Därefter kan du välja en tillgången lek antigen pPile med siffra 1-4 eller mPile 1-4. Om du tidigare valt pPile och tillexempel går till pPile så är det en otillåten spelning och du måste börja om.
